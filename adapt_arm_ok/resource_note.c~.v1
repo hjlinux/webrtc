@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "resource_note.h"
+#include "zk_comm.h"
+#include "param_conf.h"
+
+static VIDEO_PARAM_S videoParam[] = {
+    {"classroom1", ZK_VI_MODE_8_1080P,  -1, 2, -1, 2, 0, 0, 0}, // SDI TEACHER
+    {"classroom2", ZK_VI_MODE_8_1080P,  -1, 3, -1, 3, 1, 1, 0}, // SDI STUDENTS 
+    {"classroom3", ZK_VI_MODE_8_1080P,  -1, 4, -1, 4, 2, 2, 0}, // SDI STUDENTS 
+    {"classroom4", ZK_VI_MODE_8_1080P,  -1, 5, -1, 5, 3, 3, 0}, // SDI STUDENTS 
+};
+
+int GetClientChn()
+{
+    int i;
+    for(i=0; i<MAX_CLIENT_CNT; i++)
+    {
+        if(videoParam[i].play == 0)
+        {
+            videoParam[i].play = 1;
+            break;    
+        }
+    }
+    printf("GetClientChn:%d\n",i);
+    if(i >= MAX_CLIENT_CNT)
+        return -1;
+    else
+        return i;
+}
+
+int GetClientVpssGrp(int clientChn)
+{
+    return videoParam[clientChn].vpssGrp;
+}
+
+
+int GetClientVoChn(int clientChn)
+{
+    int voChn;
+    if(IsTeacher())
+    {
+        voChn = videoParam[clientChn].voChn;
+    }
+    else
+    {
+        voChn = videoParam[clientChn].voChn -1;
+    }
+    return voChn;
+}
+
+int GetClientVdecChn(int clientChn)
+{
+    return videoParam[clientChn].vdecChn;
+}
+
+void ClientExit(int clientChn)
+{
+    if((clientChn < MAX_CLIENT_CNT) && (clientChn >= 0))
+    {
+        videoParam[clientChn].play = 0;
+    }
+}
+
+int GetMaxCnt()
+{
+    return MAX_CLIENT_CNT + MAX_LOCAL_CNT -1;    
+}
+
+int GetClientMaxCnt()
+{
+    return MAX_CLIENT_CNT;    
+}
+
+int SetDisplayInfo(int clientChn,char *name,int videoChn,int disp_pos_)
+{
+    
+}
+
